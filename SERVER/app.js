@@ -18,7 +18,11 @@ io.on("connection",(socket)=>{ //connection event: Fired when a new client conne
     socket.on("message",(data)=>{
        console.log(data)
     //    io.emit("receive-msg",`${data} is being send by user ${socket.id}`) // to send to everyone including yourself
-       socket.broadcast.emit("receive-msg",`${data} is being send by user ${socket.id}`) //send to others but not to yourself
+       socket.broadcast.emit("receive-msg",`${data.message} is being send by user ${socket.id}`) //send to others but not to yourself
+    })
+    socket.on("messageTO",(data)=>{
+        console.log(data)
+        io.to(data.room).emit("receive-msg",`${data.message} is being send by user ${socket.id} only to you`)
     })
     //socket.on("disconnect", ...) is a built-in event in Socket.IO. It is triggered when a socket (client) disconnects from the server.
     socket.on("disconnect",()=>{ 
@@ -26,6 +30,12 @@ io.on("connection",(socket)=>{ //connection event: Fired when a new client conne
     })
     // socket.emit("welcomeEVENT",`welcome to the server ${socket.id}`) // use to send event 
     // socket.broadcast.emit("welcomeEVENT",`${socket.id} user has joined the server`) // sends message to other sockets not to itself (used when like-this user has joined)
+    socket.on("join-room",(room)=>{
+         socket.join(room)
+    })
+    socket.on("leave-room",(room)=>{
+        socket.leave(room)
+   })
 })
 app.use(cors())   
 /**
